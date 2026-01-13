@@ -7,12 +7,15 @@ import { Label } from '@/components/ui/label'
 import { Pencil } from 'lucide-react'
 import { TodoListProps } from '../page'
 import { FormEvent, useState } from 'react'
+import { TeamMember, teamMembers } from '../data/team-members'
+import TeamMembersTable from './team-members-table'
 
 const AddOrEditTask = ({ taskType, taskToEdit, onAddOrEditTask }: { taskType: string, taskToEdit?: TodoListProps, onAddOrEditTask: (task: TodoListProps) => void }) => {
 
   const [taskId, setTaskId] = useState<number>();
   const [taskTitle, setTaskTitle] = useState<string>(taskToEdit ? taskToEdit.title : '');
   const [taskDescription, setTaskDescription] = useState<string>(taskToEdit ? taskToEdit.description : '');
+  const [taskMembers, setTaskMembers] = useState<TeamMember[]>(taskToEdit ? taskToEdit.team : []);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +26,8 @@ const AddOrEditTask = ({ taskType, taskToEdit, onAddOrEditTask }: { taskType: st
       id: taskToEdit?.id || 0,
       title: taskTitle || '',
       description: taskDescription || '',
-      completed: false
+      completed: false,
+      team: taskToEdit?.team || []
     })
   }
 
@@ -49,6 +53,17 @@ const AddOrEditTask = ({ taskType, taskToEdit, onAddOrEditTask }: { taskType: st
             <div className="grid gap-3">
               <Label htmlFor="username-1">Description</Label>
               <Input id="task-description" name="task-description" value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} defaultValue={taskToEdit?.description} />
+            </div>
+            <div className='grid gap-3'>
+              {
+                taskType === 'edit' && (
+                  <>
+                  
+                  <Label>Team Members</Label>
+                  <TeamMembersTable team={taskToEdit?.team || []} />
+                  </>
+                )
+              }
             </div>
           </div>
           <DialogFooter>
